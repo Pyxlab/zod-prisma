@@ -1,6 +1,7 @@
 {
 	"name": "zod-prisma",
 	"version": "0.5.4",
+	"private": true,
 	"description": "A Prisma generator that creates Zod schemas for all of your models",
 	"license": "MIT",
 	"author": "Carter Grimmeisen",
@@ -15,9 +16,7 @@
 	"main": "dist/index.js",
 	"module": "dist/zod-prisma.esm.js",
 	"typings": "dist/index.d.ts",
-	"bin": {
-		"zod-prisma": "bin/cli.js"
-	},
+	"bin": "bin/cli.js",
 	"keywords": [
 		"zod",
 		"prisma",
@@ -53,6 +52,7 @@
 	},
 	"dependencies": {
 		"@prisma/generator-helper": "~3.8.1",
+		"lodash.uniq": "^4.5.0",
 		"parenthesis": "^3.1.8",
 		"ts-morph": "^13.0.2"
 	},
@@ -61,6 +61,7 @@
 		"@prisma/sdk": "~3.7.0",
 		"@tsconfig/recommended": "^1.0.1",
 		"@types/fs-extra": "^9.0.13",
+		"@types/lodash.uniq": "^4.5.7",
 		"dts-cli": "^1.1.5",
 		"execa": "^5.1.0",
 		"fast-glob": "^3.2.5",

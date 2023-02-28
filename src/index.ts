@@ -1,11 +1,13 @@
+import { generatorHandler } from '@prisma/generator-helper'
+import { Project } from 'ts-morph'
+import { SemicolonPreference } from 'typescript'
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore Importing package.json for automated synchronization of version numbers
 import { version } from '../package.json'
 
-import { generatorHandler } from '@prisma/generator-helper'
-import { SemicolonPreference } from 'typescript'
 import { configSchema, PrismaOptions } from './config'
 import { populateModelFile, generateBarrelFile } from './generator'
-import { Project } from 'ts-morph'
 
 generatorHandler({
 	onManifest() {
@@ -23,13 +25,13 @@ generatorHandler({
 		const { schemaPath } = options
 		const outputPath = options.generator.output!.value
 		const clientPath = options.otherGenerators.find(
-			(each) => each.provider.value === 'prisma-client-js'
+			(each) => each.provider.value === 'prisma-client-js',
 		)!.output!.value!
 
 		const results = configSchema.safeParse(options.generator.config)
 		if (!results.success)
 			throw new Error(
-				'Incorrect config provided. Please check the values you provided and try again.'
+				'Incorrect config provided. Please check the values you provided and try again.',
 			)
 
 		const config = results.data
@@ -42,7 +44,7 @@ generatorHandler({
 		const indexFile = project.createSourceFile(
 			`${outputPath}/index.ts`,
 			{},
-			{ overwrite: true }
+			{ overwrite: true },
 		)
 
 		generateBarrelFile(models, indexFile)
@@ -57,7 +59,7 @@ generatorHandler({
 			const sourceFile = project.createSourceFile(
 				`${outputPath}/${model.name.toLowerCase()}.ts`,
 				{},
-				{ overwrite: true }
+				{ overwrite: true },
 			)
 
 			populateModelFile(model, sourceFile, config, prismaOptions)

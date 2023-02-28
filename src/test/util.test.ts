@@ -1,7 +1,10 @@
-import { mock } from 'jest-mock-extended'
 import path from 'path'
-import type { CodeBlockWriter } from 'ts-morph'
+
+import { mock } from 'jest-mock-extended'
+
 import { dotSlash, writeArray } from '../util'
+
+import type { CodeBlockWriter } from 'ts-morph'
 
 describe('Util Package', () => {
 	test('writeArray: default newLines', () => {

@@ -1,4 +1,5 @@
 import { DMMF } from '@prisma/generator-helper'
+
 import { getZodConstructor } from '../types'
 
 describe('types Package', () => {

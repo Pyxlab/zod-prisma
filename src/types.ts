@@ -1,13 +1,14 @@
-import type { DMMF } from '@prisma/generator-helper'
 import { computeCustomSchema, computeModifiers } from './docs'
+
+import type { DMMF } from '@prisma/generator-helper'
 
 export const getZodConstructor = (
 	field: DMMF.Field,
 	getRelatedModelName = (name: string | DMMF.SchemaEnum | DMMF.OutputType | DMMF.SchemaArg) =>
-		name.toString()
+		name.toString(),
 ) => {
 	let zodType = 'z.unknown()'
-	let extraModifiers: string[] = ['']
+	const extraModifiers: string[] = ['']
 	if (field.kind === 'scalar') {
 		switch (field.type) {
 			case 'String':

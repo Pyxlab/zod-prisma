@@ -33,8 +33,8 @@ describe('docs Package', () => {
 	test('getJSDocs', () => {
 		const docLines = getJSDocs(
 			['This is something', 'How about something else', '@something', '@example ur mom'].join(
-				'\n'
-			)
+				'\n',
+			),
 		)
 
 		expect(docLines.length).toBe(6)

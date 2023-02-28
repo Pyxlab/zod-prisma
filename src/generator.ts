@@ -1,21 +1,24 @@
 import path from 'path'
+
 import { DMMF } from '@prisma/generator-helper'
+import _uniq from 'lodash/uniq'
 import {
 	ImportDeclarationStructure,
 	SourceFile,
 	StructureKind,
 	VariableDeclarationKind,
 } from 'ts-morph'
+
 import { Config, PrismaOptions } from './config'
-import { dotSlash, needsRelatedModel, useModelNames, writeArray } from './util'
 import { getJSDocs } from './docs'
 import { getZodConstructor } from './types'
+import { dotSlash, needsRelatedModel, useModelNames, writeArray } from './util'
 
 export const writeImportsForModel = (
 	model: DMMF.Model,
 	sourceFile: SourceFile,
 	config: Config,
-	{ schemaPath, outputPath, clientPath }: PrismaOptions
+	{ schemaPath, outputPath, clientPath }: PrismaOptions,
 ) => {
 	const { relatedModelName } = useModelNames(config)
 	const importList: ImportDeclarationStructure[] = [
@@ -31,7 +34,7 @@ export const writeImportsForModel = (
 			kind: StructureKind.ImportDeclaration,
 			namespaceImport: 'imports',
 			moduleSpecifier: dotSlash(
-				path.relative(outputPath, path.resolve(path.dirname(schemaPath), config.imports))
+				path.relative(outputPath, path.resolve(path.dirname(schemaPath), config.imports)),
 			),
 		})
 	}
@@ -53,7 +56,7 @@ export const writeImportsForModel = (
 			kind: StructureKind.ImportDeclaration,
 			isTypeOnly: enumFields.length === 0,
 			moduleSpecifier: dotSlash(relativePath),
-			namedImports: enumFields.map((f) => f.type),
+			namedImports: _uniq(enumFields.map((f) => f.type)),
 		})
 	}
 
@@ -69,12 +72,14 @@ export const writeImportsForModel = (
 						filteredFields.flatMap((f) => [
 							`Complete${f.type}`,
 							relatedModelName(f.type),
-						])
-					)
+						]),
+					),
 				),
 			})
 		}
 	}
+
+	console.log(importList)
 
 	sourceFile.addImportDeclarations(importList)
 }
@@ -83,7 +88,7 @@ export const writeTypeSpecificSchemas = (
 	model: DMMF.Model,
 	sourceFile: SourceFile,
 	config: Config,
-	_prismaOptions: PrismaOptions
+	_prismaOptions: PrismaOptions,
 ) => {
 	if (model.fields.some((f) => f.type === 'Json')) {
 		sourceFile.addStatements((writer) => {
@@ -128,7 +133,7 @@ export const generateSchemaForModel = (
 	model: DMMF.Model,
 	sourceFile: SourceFile,
 	config: Config,
-	_prismaOptions: PrismaOptions
+	_prismaOptions: PrismaOptions,
 ) => {
 	const { modelName } = useModelNames(config)
 
@@ -164,7 +169,7 @@ export const generateRelatedSchemaForModel = (
 	model: DMMF.Model,
 	sourceFile: SourceFile,
 	config: Config,
-	_prismaOptions: PrismaOptions
+	_prismaOptions: PrismaOptions,
 ) => {
 	const { modelName, relatedModelName } = useModelNames(config)
 
@@ -186,12 +191,12 @@ export const generateRelatedSchemaForModel = (
 			'',
 			'/**',
 			` * ${relatedModelName(
-				model.name
+				model.name,
 			)} contains all relations on your model in addition to the scalars`,
 			' *',
 			' * NOTE: Lazy required in case of potential circular dependencies within schema',
 			' */',
-		])
+		]),
 	)
 
 	sourceFile.addVariableStatement({
@@ -212,8 +217,8 @@ export const generateRelatedSchemaForModel = (
 									.write(
 										`${field.name}: ${getZodConstructor(
 											field,
-											relatedModelName
-										)}`
+											relatedModelName,
+										)}`,
 									)
 									.write(',')
 									.newLine()
@@ -230,7 +235,7 @@ export const populateModelFile = (
 	model: DMMF.Model,
 	sourceFile: SourceFile,
 	config: Config,
-	prismaOptions: PrismaOptions
+	prismaOptions: PrismaOptions,
 ) => {
 	writeImportsForModel(model, sourceFile, config, prismaOptions)
 	writeTypeSpecificSchemas(model, sourceFile, config, prismaOptions)
@@ -243,6 +248,6 @@ export const generateBarrelFile = (models: DMMF.Model[], indexFile: SourceFile) 
 	models.forEach((model) =>
 		indexFile.addExportDeclaration({
 			moduleSpecifier: `./${model.name.toLowerCase()}`,
-		})
+		}),
 	)
 }

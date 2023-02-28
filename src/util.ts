@@ -1,6 +1,8 @@
 import { DMMF } from '@prisma/generator-helper'
-import type { CodeBlockWriter } from 'ts-morph'
+
 import { Config } from './config'
+
+import type { CodeBlockWriter } from 'ts-morph'
 
 export const writeArray = (writer: CodeBlockWriter, array: string[], newLine = true) =>
 	array.forEach((line) => writer.write(line).conditionalNewLine(newLine))
@@ -17,7 +19,7 @@ export const useModelNames = ({ modelCase, modelSuffix, relationModel }: Config)
 		modelName: (name: string) => formatModelName(name, relationModel === 'default' ? '_' : ''),
 		relatedModelName: (name: string | DMMF.SchemaEnum | DMMF.OutputType | DMMF.SchemaArg) =>
 			formatModelName(
-				relationModel === 'default' ? name.toString() : `Related${name.toString()}`
+				relationModel === 'default' ? name.toString() : `Related${name.toString()}`,
 			),
 	}
 }

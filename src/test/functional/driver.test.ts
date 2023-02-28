@@ -1,10 +1,12 @@
-import glob from 'fast-glob'
-import execa from 'execa'
-import { getDMMF, getConfig } from '@prisma/sdk'
-import { readFile } from 'fs-extra'
 import path from 'path'
+
+import { getDMMF, getConfig } from '@prisma/sdk'
+import execa from 'execa'
+import glob from 'fast-glob'
+import { readFile } from 'fs-extra'
 import { Project } from 'ts-morph'
 import { SemicolonPreference } from 'typescript'
+
 import { configSchema, PrismaOptions } from '../../config'
 import { populateModelFile, generateBarrelFile } from '../../generator'
 
@@ -31,7 +33,7 @@ const ftForDir = (dir: string) => async () => {
 	const config = configSchema.parse(generator.config)
 
 	const prismaClient = generators.find(
-		(generator) => generator.provider.value === 'prisma-client-js'
+		(generator) => generator.provider.value === 'prisma-client-js',
 	)!
 
 	const outputPath = path.resolve(path.dirname(schemaFile), generator.output!.value)
@@ -60,7 +62,7 @@ const ftForDir = (dir: string) => async () => {
 	const expectedIndexFile = path.resolve(expectedDir, `index.ts`)
 	const expectedIndexContents = await readFile(
 		path.resolve(expectedDir, expectedIndexFile),
-		'utf-8'
+		'utf-8',
 	)
 
 	expect(actualIndexContents).toStrictEqual(expectedIndexContents)
@@ -70,7 +72,7 @@ const ftForDir = (dir: string) => async () => {
 			const sourceFile = project.createSourceFile(
 				`${actualDir}/${model.name.toLowerCase()}.ts`,
 				{},
-				{ overwrite: true }
+				{ overwrite: true },
 			)
 
 			populateModelFile(model, sourceFile, config, prismaOptions)
@@ -84,17 +86,17 @@ const ftForDir = (dir: string) => async () => {
 			await sourceFile.save()
 			const actualContents = await readFile(
 				`${actualDir}/${model.name.toLowerCase()}.ts`,
-				'utf-8'
+				'utf-8',
 			)
 
 			const expectedFile = path.resolve(expectedDir, `${model.name.toLowerCase()}.ts`)
 			const expectedContents = await readFile(
 				path.resolve(expectedDir, expectedFile),
-				'utf-8'
+				'utf-8',
 			)
 
 			expect(actualContents).toStrictEqual(expectedContents)
-		})
+		}),
 	)
 
 	await project.save()
@@ -116,7 +118,7 @@ describe('Functional Tests', () => {
 	test.concurrent('Type Check Everything', async () => {
 		const typeCheckResults = await execa(
 			path.resolve(__dirname, '../../../node_modules/.bin/tsc'),
-			['--strict', '--noEmit', ...(await glob(`${__dirname}/*/expected/*.ts`))]
+			['--strict', '--noEmit', ...(await glob(`${__dirname}/*/expected/*.ts`))],
 		)
 
 		expect(typeCheckResults.exitCode).toBe(0)
