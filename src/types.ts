@@ -11,33 +11,51 @@ export const getZodConstructor = (
 	const extraModifiers: string[] = ['']
 
 	const hasCoerce = field.documentation?.includes('coerce')
+	const hasMessage = field.documentation?.includes('.message(')
+	const messageRegex = /message\((?<message>.*)\)/
 
 	if (field.kind === 'scalar') {
+		let message = ''
+		if (hasMessage) {
+			const messageMatch = field.documentation?.match(messageRegex)
+
+			if (messageMatch?.groups?.message && messageMatch.groups.message.startsWith('{')) {
+				message = messageMatch.groups.message
+			} else if (
+				messageMatch?.groups?.message &&
+				!messageMatch.groups.message.startsWith('{')
+			) {
+				message = field.isRequired
+					? `{ required_error: ${messageMatch.groups.message} }`
+					: `{ invalid_type_error: ${messageMatch.groups.message} }`
+			}
+		}
+
 		switch (field.type) {
 			case 'String':
-				zodType = hasCoerce ? 'z.coerce.string()' : 'z.string()'
+				zodType = hasCoerce ? `z.coerce.string(${message})` : `z.string(${message})`
 				break
 			case 'Int':
-				zodType = hasCoerce ? 'z.coerce.number()' : 'z.number()'
+				zodType = hasCoerce ? `z.coerce.number(${message})` : `z.number(${message})`
 				extraModifiers.push('int()')
 				break
 			case 'BigInt':
-				zodType = hasCoerce ? 'z.coerce.bigint()' : 'z.bigint()'
+				zodType = hasCoerce ? `z.coerce.bigint(${message})` : `z.bigint(${message})`
 				break
 			case 'DateTime':
-				zodType = hasCoerce ? 'z.coerce.date()' : 'z.date()'
+				zodType = hasCoerce ? `z.coerce.date(${message})` : `z.date(${message})`
 				break
 			case 'Float':
-				zodType = hasCoerce ? 'z.coerce.number()' : 'z.number()'
+				zodType = hasCoerce ? `z.coerce.number(${message})` : `z.number(${message})`
 				break
 			case 'Decimal':
-				zodType = hasCoerce ? 'z.coerce.number()' : 'z.number()'
+				zodType = hasCoerce ? `z.coerce.number(${message})` : `z.number(${message})`
 				break
 			case 'Json':
 				zodType = 'jsonSchema'
 				break
 			case 'Boolean':
-				zodType = 'z.boolean()'
+				zodType = `z.boolean(${message})`
 				break
 			// TODO: Proper type for bytes fields
 			case 'Bytes':
@@ -52,7 +70,7 @@ export const getZodConstructor = (
 
 	if (field.isList) extraModifiers.push('array()')
 	if (field.documentation) {
-		const documentation = field.documentation.replace('.coerce', '')
+		const documentation = field.documentation.replace('.coerce', '').replace(messageRegex, '')
 		zodType = computeCustomSchema(documentation) ?? zodType
 		extraModifiers.push(...computeModifiers(documentation))
 	}
