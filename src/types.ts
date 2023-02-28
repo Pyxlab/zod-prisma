@@ -9,26 +9,29 @@ export const getZodConstructor = (
 ) => {
 	let zodType = 'z.unknown()'
 	const extraModifiers: string[] = ['']
+
+	const hasCoerce = field.documentation?.includes('coerce')
+
 	if (field.kind === 'scalar') {
 		switch (field.type) {
 			case 'String':
-				zodType = 'z.string()'
+				zodType = hasCoerce ? 'z.coerce.string()' : 'z.string()'
 				break
 			case 'Int':
-				zodType = 'z.number()'
+				zodType = hasCoerce ? 'z.coerce.number()' : 'z.number()'
 				extraModifiers.push('int()')
 				break
 			case 'BigInt':
-				zodType = 'z.bigint()'
+				zodType = hasCoerce ? 'z.coerce.bigint()' : 'z.bigint()'
 				break
 			case 'DateTime':
-				zodType = 'z.date()'
+				zodType = hasCoerce ? 'z.coerce.date()' : 'z.date()'
 				break
 			case 'Float':
-				zodType = 'z.number()'
+				zodType = hasCoerce ? 'z.coerce.number()' : 'z.number()'
 				break
 			case 'Decimal':
-				zodType = 'z.number()'
+				zodType = hasCoerce ? 'z.coerce.number()' : 'z.number()'
 				break
 			case 'Json':
 				zodType = 'jsonSchema'
@@ -49,8 +52,9 @@ export const getZodConstructor = (
 
 	if (field.isList) extraModifiers.push('array()')
 	if (field.documentation) {
-		zodType = computeCustomSchema(field.documentation) ?? zodType
-		extraModifiers.push(...computeModifiers(field.documentation))
+		const documentation = field.documentation.replace('.coerce', '')
+		zodType = computeCustomSchema(documentation) ?? zodType
+		extraModifiers.push(...computeModifiers(documentation))
 	}
 	if (!field.isRequired && field.type !== 'Json') extraModifiers.push('nullish()')
 	// if (field.hasDefaultValue) extraModifiers.push('optional()')

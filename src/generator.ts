@@ -79,8 +79,6 @@ export const writeImportsForModel = (
 		}
 	}
 
-	console.log(importList)
-
 	sourceFile.addImportDeclarations(importList)
 }
 
