@@ -27,7 +27,6 @@
 		"dist"
 	],
 	"scripts": {
-		"postinstall": "yarn build",
 		"build": "dts build --target node --format cjs --rollupTypes",
 		"lint": "tsc --noEmit && dts lint src --ignore-pattern src/test/functional",
 		"prepare": "husky install",
