@@ -14,23 +14,20 @@ export const getZodConstructor = (
 	const hasMessage = field.documentation?.includes('.message(')
 	const messageRegex = /message\((?<message>.*)\)/
 
-	if (field.kind === 'scalar') {
-		let message = ''
-		if (hasMessage) {
-			const messageMatch = field.documentation?.match(messageRegex)
+	let message = ''
+	if (hasMessage) {
+		const messageMatch = field.documentation?.match(messageRegex)
 
-			if (messageMatch?.groups?.message && messageMatch.groups.message.startsWith('{')) {
-				message = messageMatch.groups.message
-			} else if (
-				messageMatch?.groups?.message &&
-				!messageMatch.groups.message.startsWith('{')
-			) {
-				message = field.isRequired
-					? `{ required_error: ${messageMatch.groups.message} }`
-					: `{ invalid_type_error: ${messageMatch.groups.message} }`
-			}
+		if (messageMatch?.groups?.message && messageMatch.groups.message.startsWith('{')) {
+			message = messageMatch.groups.message
+		} else if (messageMatch?.groups?.message && !messageMatch.groups.message.startsWith('{')) {
+			message = field.isRequired
+				? `{ required_error: ${messageMatch.groups.message} }`
+				: `{ invalid_type_error: ${messageMatch.groups.message} }`
 		}
+	}
 
+	if (field.kind === 'scalar') {
 		switch (field.type) {
 			case 'String':
 				zodType = hasCoerce ? `z.coerce.string(${message})` : `z.string(${message})`
@@ -63,7 +60,7 @@ export const getZodConstructor = (
 				break
 		}
 	} else if (field.kind === 'enum') {
-		zodType = `z.nativeEnum(${field.type})`
+		zodType = `z.nativeEnum(${field.type}${hasMessage ? ', ' + message : ''})`
 	} else if (field.kind === 'object') {
 		zodType = getRelatedModelName(field.type)
 	}
