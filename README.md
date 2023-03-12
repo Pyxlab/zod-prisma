@@ -19,32 +19,31 @@
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
 
-[![NPM][npm-shield]][npm-url]
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-
 <!-- PROJECT LOGO -->
 <br />
-<p align="center">
-  <a href="https://github.com/CarterGrimmeisen/zod-prisma">
+<div align="center">
+  <a href="https://github.com/Pyxlab/zod-prisma">
     <img src="https://raw.githubusercontent.com/CarterGrimmeisen/zod-prisma/main/images/zod-prisma.svg" alt="Logo" width="120" height="120">
   </a>
   <h3 align="center">Zod Prisma</h3>
   <p align="center">
     A custom prisma generator that creates Zod schemas from your Prisma model.
-    <br />
-    <a href="https://github.com/CarterGrimmeisen/zod-prisma"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/CarterGrimmeisen/zod-prisma/blob/main/src/test/functional">View Demo</a>
-    ·
-    <a href="https://github.com/CarterGrimmeisen/zod-prisma/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/CarterGrimmeisen/zod-prisma/issues">Request Feature</a>
+  <p align="center">
+   because the <a href="https://github.com/CarterGrimmeisen/zod-prisma">zod-prisma</a> package is without updates for a while, I made a fork to advance my pull request
   </p>
+	<div align="center">
+		[![NPM][npm-shield]][npm-url] [![Contributors][contributors-shield]][contributors-url] [![Forks][forks-shield]][forks-url] [![Stargazers][stars-shield]][stars-url] [![Issues][issues-shield]][issues-url] [![MIT License][license-shield]][license-url]
+	</div>
+    <br />
+    <a href="https://github.com/Pyxlab/zod-prisma"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/Pyxlab/zod-prisma/blob/main/src/test/functional">View Demo</a>
+    ·
+    <a href="https://github.com/Pyxlab/zod-prisma/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/Pyxlab/zod-prisma/issues">Request Feature</a>
+  </div>
 </p>
 
 <!-- TABLE OF CONTENTS -->
@@ -72,6 +71,8 @@
         <a href="#importing-helpers">Importing Helpers</a>
         <ul>
         <li><a href="#custom-zod-schema">Custom Zod Schemas</a></li>
+				<li><a href="#zod-coerce">Zod Coercion</a></li>
+				<li><a href="#zod-message">Zod Message</a></li>
         </ul>
       </li>
       <li><a href="#json-fields">JSON Fields</a></li>
@@ -116,16 +117,16 @@ npm install -g yarn
 
 ### Installation
 
-0.  **Ensure your tsconfig.json enables the compiler's strict mode.**
-    **Zod requires it and so do we, you will experience TS errors without strict mode enabled**
+0. **Ensure your tsconfig.json enables the compiler's strict mode.**
+   **Zod requires it and so do we, you will experience TS errors without strict mode enabled**
 
-1.  Add zod-prisma as a dev dependency
+1. Add zod-prisma as a dev dependency
 
     ```sh
-    yarn add -D zod-prisma
+    yarn add -D @pyxlab/zod-prisma
     ```
 
-2.  Add the zod-prisma generator to your schema.prisma
+2. Add the zod-prisma generator to your schema.prisma
 
     ```prisma
     generator zod {
@@ -152,8 +153,8 @@ npm install -g yarn
     }
     ```
 
-3.  Run `npx prisma generate` or `yarn prisma generate` to generate your zod schemas
-4.  Import the generated schemas form your selected output location
+3. Run `npx prisma generate` or `yarn prisma generate` to generate your zod schemas
+4. Import the generated schemas form your selected output location
 
 <!-- USAGE EXAMPLES -->
 
@@ -235,11 +236,11 @@ zod-prisma enables you to reuse these by importing them via a config options. Fo
 generator zod {
   provider      = "zod-prisma"
   output        = "./zod"
-  imports 		  = "../src/zod-schemas"
+  imports     = "../src/zod-schemas"
 }
 
 model User {
-  username	String /// @zod.refine(imports.isValidUsername)
+  username String /// @zod.refine(imports.isValidUsername)
 }
 ```
 
@@ -258,6 +259,58 @@ By specifying the custom schema within the parentheses you can replace the autog
 
 > For instance if you wanted to use `z.preprocess`
 
+#### Zod Coercion
+
+Zod schemas can be used to force data into a particular shape. This is useful, for example, if you want to string into a number or date. To do this, you can use the `@zod.coerce()` directive.
+
+```prisma
+model User {
+ id String @id @default(uuid())
+ name String /// @zod.coerce
+ age Int /// @zod.coerce.min(18)
+}
+```
+
+Generated code:
+
+```ts
+export const UserModel = z.object({
+	id: z.string().uuid(),
+	name: z.coerce.string(),
+	age: z.coerce.number().min(18),
+})
+```
+
+#### Zod Message
+
+Zod messages can be used to override the default error message for a field. To do this, you can use the `@zod.message()` directive.
+If the table field is required, the message defaults to required_error, and if null, it defaults to invalid_type_error, so you can enter either or both.
+
+```prisma
+model User {
+ id String @id @default(uuid())
+ name String /// @zod.message('Name is required')
+ phone String? /// @zod.message('Phone must be a string')
+ age Int /// @zod.message({ required_error: 'Age is required', invalid_type_error: 'Age must be at least 18' })
+}
+```
+
+Generated code:
+
+```ts
+export const UserModel = z.object({
+	id: z.string().uuid(),
+	name: z.string({ required_error: 'Name is required' }),
+	phone: z.string({ invalid_type_error: 'Phone must be a string' }).nulish(),
+	age: z
+		.number({
+			required_error: 'Age is required',
+			invalid_type_error: 'Age must be at least 18',
+		})
+		.min(18),
+})
+```
+
 ### JSON Fields
 
 JSON fields in Prisma disallow null values. This is to disambiguate between setting a field's value to NULL in the database and having
@@ -270,13 +323,13 @@ you can set `prismaJsonNullability` to `false` in the generator options.
 
 <!-- Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources. -->
 
-_For examples, please refer to the [Examples Directory](https://github.com/CarterGrimmeisen/zod-prisma/blob/main/examples) or the [Functional Tests](https://github.com/CarterGrimmeisen/zod-prisma/blob/main/src/test/functional)_
+_For examples, please refer to the [Examples Directory](https://github.com/Pyxlab/zod-prisma/blob/main/examples) or the [Functional Tests](https://github.com/Pyxlab/zod-prisma/blob/main/src/test/functional)_
 
 <!-- ROADMAP -->
 
 ## Roadmap
 
-See the [open issues](https://github.com/CarterGrimmeisen/zod-prisma/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/Pyxlab/zod-prisma/issues) for a list of proposed features (and known issues).
 
 <!-- CONTRIBUTING -->
 
@@ -302,20 +355,20 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Carter Grimmeisen - Carter.Grimmeisen@uah.edu
 
-Project Link: [https://github.com/CarterGrimmeisen/zod-prisma](https://github.com/CarterGrimmeisen/zod-prisma)
+Project Link: [https://github.com/Pyxlab/zod-prisma](https://github.com/Pyxlab/zod-prisma)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
 [npm-shield]: https://img.shields.io/npm/v/zod-prisma?style=for-the-badge
 [npm-url]: https://www.npmjs.com/package/zod-prisma
-[contributors-shield]: https://img.shields.io/github/contributors/CarterGrimmeisen/zod-prisma.svg?style=for-the-badge
-[contributors-url]: https://github.com/CarterGrimmeisen/zod-prisma/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/CarterGrimmeisen/zod-prisma.svg?style=for-the-badge
-[forks-url]: https://github.com/CarterGrimmeisen/zod-prisma/network/members
-[stars-shield]: https://img.shields.io/github/stars/CarterGrimmeisen/zod-prisma.svg?style=for-the-badge
-[stars-url]: https://github.com/CarterGrimmeisen/zod-prisma/stargazers
-[issues-shield]: https://img.shields.io/github/issues/CarterGrimmeisen/zod-prisma.svg?style=for-the-badge
-[issues-url]: https://github.com/CarterGrimmeisen/zod-prisma/issues
-[license-shield]: https://img.shields.io/github/license/CarterGrimmeisen/zod-prisma.svg?style=for-the-badge
-[license-url]: https://github.com/CarterGrimmeisen/zod-prisma/blob/main/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/Pyxlab/zod-prisma.svg?style=for-the-badge
+[contributors-url]: https://github.com/Pyxlab/zod-prisma/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/Pyxlab/zod-prisma.svg?style=for-the-badge
+[forks-url]: https://github.com/Pyxlab/zod-prisma/network/members
+[stars-shield]: https://img.shields.io/github/stars/Pyxlab/zod-prisma.svg?style=for-the-badge
+[stars-url]: https://github.com/Pyxlab/zod-prisma/stargazers
+[issues-shield]: https://img.shields.io/github/issues/Pyxlab/zod-prisma.svg?style=for-the-badge
+[issues-url]: https://github.com/Pyxlab/zod-prisma/issues
+[license-shield]: https://img.shields.io/github/license/Pyxlab/zod-prisma.svg?style=for-the-badge
+[license-url]: https://github.com/Pyxlab/zod-prisma/blob/main/LICENSE

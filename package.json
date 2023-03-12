@@ -1,17 +1,17 @@
 {
-	"name": "zod-prisma",
+	"name": "@pyxlab/zod-prisma",
 	"version": "0.5.4",
-	"private": true,
+	"private": false,
 	"description": "A Prisma generator that creates Zod schemas for all of your models",
 	"license": "MIT",
-	"author": "Carter Grimmeisen",
-	"homepage": "https://github.com/CarterGrimmeisen/zod-prisma#readme",
+	"author": "Walaff Fernandes",
+	"homepage": "https://github.com/Pyxlab/zod-prisma#readme",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/CarterGrimmeisen/zod-prisma.git"
+		"url": "https://github.com/Pyxlab/zod-prisma.git"
 	},
 	"bugs": {
-		"url": "https://github.com/CarterGrimmeisen/zod-prisma/issues"
+		"url": "https://github.com/Pyxlab/zod-prisma/issues"
 	},
 	"main": "dist/index.js",
 	"module": "dist/zod-prisma.esm.js",
@@ -86,5 +86,9 @@
 	},
 	"engines": {
 		"node": ">=14"
-	}
+	},
+	"publishConfig": {
+    "tag": "latest",
+    "access": "public"
+  }
 }
