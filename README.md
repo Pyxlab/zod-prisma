@@ -138,7 +138,7 @@ npm install -g yarn
 
     ```prisma
     generator zod {
-      provider                 = "zod-prisma"
+      provider                 = "@pyxlab/zod-prisma"
       output                   = "./zod" // (default) the directory where generated zod schemas will be saved
 
       relationModel            = true // (default) Create and export both plain and related models.
