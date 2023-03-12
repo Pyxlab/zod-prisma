@@ -21,6 +21,40 @@
 
 <!-- PROJECT LOGO -->
 <br />
+
+<div align="center">
+  <a href="https://github.com/Pyxlab/zod-prisma">
+    <img src="https://raw.githubusercontent.com/CarterGrimmeisen/zod-prisma/main/images/zod-prisma.svg" alt="Logo" width="120" height="120" >
+  </a>
+</div>
+
+<div align="center">
+  <h3 align="center">Zod Prisma</h3>
+  <p align="center">
+    A custom prisma generator that creates Zod schemas from your Prisma model.
+  <p align="center">
+   because the <a href="https://github.com/CarterGrimmeisen/zod-prisma">zod-prisma</a> package is without updates for a while, I made a fork to advance my pull request
+  </p>
+	<br />
+	<a href="https://github.com/Pyxlab/zod-prisma"><strong>Explore the docs »</strong></a>
+	<br />
+	<br />
+	<a href="https://github.com/Pyxlab/zod-prisma/blob/main/src/test/functional">View Demo</a>
+	·
+	<a href="https://github.com/Pyxlab/zod-prisma/issues">Report Bug</a>
+	·
+	<a href="https://github.com/Pyxlab/zod-prisma/issues">Request Feature</a>
+</div>
+
+<br />
+
+<div align="center">
+
+[![NPM][npm-shield]][npm-url] [![Contributors][contributors-shield]][contributors-url] [![Forks][forks-shield]][forks-url] [![Stargazers][stars-shield]][stars-url] [![Issues][issues-shield]][issues-url] [![MIT License][license-shield]][license-url]
+
+</div>
+
+
 <div align="center">
   <a href="https://github.com/Pyxlab/zod-prisma">
     <img src="https://raw.githubusercontent.com/CarterGrimmeisen/zod-prisma/main/images/zod-prisma.svg" alt="Logo" width="120" height="120">
