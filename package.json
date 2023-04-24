@@ -51,7 +51,7 @@
 		"testEnvironment": "node"
 	},
 	"dependencies": {
-		"@prisma/generator-helper": "~3.8.1",
+		"@prisma/generator-helper": "~4.13.0",
 		"lodash.uniq": "^4.5.0",
 		"parenthesis": "^3.1.8",
 		"ts-morph": "^13.0.2"
