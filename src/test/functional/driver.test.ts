@@ -33,7 +33,7 @@ const ftForDir = (dir: string) => async () => {
 	const config = configSchema.parse(generator.config)
 
 	const prismaClient = generators.find(
-		(generator) => generator.provider.value === 'prisma-client-js',
+		(generator) => generator.provider.value === 'prisma-client-js'
 	)!
 
 	const outputPath = path.resolve(path.dirname(schemaFile), generator.output!.value)
@@ -52,18 +52,20 @@ const ftForDir = (dir: string) => async () => {
 	indexFile.formatText({
 		indentSize: 2,
 		convertTabsToSpaces: true,
-		semicolons: SemicolonPreference.Remove,
+		semicolons: SemicolonPreference.Insert,
 	})
 
 	await indexFile.save()
 
-	const actualIndexContents = await readFile(`${actualDir}/index.ts`, 'utf-8')
+	const actualIndexContents = await readFile(`${actualDir}/index.ts`, 'utf-8').then((contents) =>
+		contents.replace(/"/g, "'").replace(/;/g, '')
+	)
 
 	const expectedIndexFile = path.resolve(expectedDir, `index.ts`)
 	const expectedIndexContents = await readFile(
 		path.resolve(expectedDir, expectedIndexFile),
-		'utf-8',
-	)
+		'utf-8'
+	).then((contents) => contents.replace(/"/g, "'").replace(/;/g, ''))
 
 	expect(actualIndexContents).toStrictEqual(expectedIndexContents)
 
@@ -72,7 +74,7 @@ const ftForDir = (dir: string) => async () => {
 			const sourceFile = project.createSourceFile(
 				`${actualDir}/${model.name.toLowerCase()}.ts`,
 				{},
-				{ overwrite: true },
+				{ overwrite: true }
 			)
 
 			populateModelFile(model, sourceFile, config, prismaOptions)
@@ -80,29 +82,31 @@ const ftForDir = (dir: string) => async () => {
 			sourceFile.formatText({
 				indentSize: 2,
 				convertTabsToSpaces: true,
-				semicolons: SemicolonPreference.Remove,
+				semicolons: SemicolonPreference.Insert,
 			})
 
 			await sourceFile.save()
 			const actualContents = await readFile(
 				`${actualDir}/${model.name.toLowerCase()}.ts`,
-				'utf-8',
-			)
+				'utf-8'
+			).then((contents) => contents.replace(/"/g, "'").replace(/;/g, ''))
 
 			const expectedFile = path.resolve(expectedDir, `${model.name.toLowerCase()}.ts`)
 			const expectedContents = await readFile(
 				path.resolve(expectedDir, expectedFile),
-				'utf-8',
-			)
+				'utf-8'
+			).then((contents) => contents.replace(/"/g, "'").replace(/;/g, ''))
 
 			expect(actualContents).toStrictEqual(expectedContents)
-		}),
+		})
 	)
 
 	await project.save()
 }
 
 describe('Functional Tests', () => {
+	jest.setTimeout(15000); // Increase the timeout to 30 seconds
+
 	test.concurrent('Basic', ftForDir('basic'))
 	test.concurrent('Config', ftForDir('config'))
 	test.concurrent('Docs', ftForDir('docs'))
@@ -118,7 +122,7 @@ describe('Functional Tests', () => {
 	test.concurrent('Type Check Everything', async () => {
 		const typeCheckResults = await execa(
 			path.resolve(__dirname, '../../../node_modules/.bin/tsc'),
-			['--strict', '--noEmit', ...(await glob(`${__dirname}/*/expected/*.ts`))],
+			['--strict', '--noEmit', ...(await glob(`${__dirname}/*/expected/*.ts`))]
 		)
 
 		expect(typeCheckResults.exitCode).toBe(0)

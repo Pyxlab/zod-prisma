@@ -29,4 +29,8 @@ model Post {
   /// The actual contents of the post.
   /// @zod.max(10240)
   contents String
+
+  /// The post date
+  /// @zod.custom(z.coerce.string())
+  date DateTime @db.Date
 }
