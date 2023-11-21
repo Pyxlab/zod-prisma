@@ -28,7 +28,7 @@ export const getZodConstructor = (
 				: `{ invalid_type_error: ${messageMatch.groups.message} }`
 		}
 
-		field.documentation = field.documentation?.replace(content, "")
+		field.documentation = field.documentation?.replace(content, '')
 	}
 
 	if (field.kind === 'scalar') {

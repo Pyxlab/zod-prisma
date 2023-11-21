@@ -23,9 +23,12 @@ describe('docs Package', () => {
 	})
 
 	test('Regression #86', () => {
-		const customSchema = computeCustomSchema(`
+		const customSchema = computeCustomSchema(
+			`
 			@zod.custom(z.string().min(1).refine((val) => isURL(val)))
-    `, "")
+    `,
+			''
+		)
 
 		expect(customSchema).toBe('z.string().min(1).refine((val) => isURL(val))')
 	})
