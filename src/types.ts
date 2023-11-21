@@ -12,11 +12,13 @@ export const getZodConstructor = (
 
 	const hasCoerce = field.documentation?.includes('coerce')
 	const hasMessage = field.documentation?.includes('.message(')
-	const messageRegex = /message\((?<message>.*)\)/
+
+	const messageRegex = /(?<message>\.message\((?<messageContent>.*?)\))/g
 
 	let message = ''
 	if (hasMessage) {
-		const messageMatch = field.documentation?.match(messageRegex)
+		const content = field.documentation?.match(messageRegex)?.[0]!
+		const messageMatch = content.match(/message\((?<message>.*)\)/)
 
 		if (messageMatch?.groups?.message && messageMatch.groups.message.startsWith('{')) {
 			message = messageMatch.groups.message
@@ -25,6 +27,8 @@ export const getZodConstructor = (
 				? `{ required_error: ${messageMatch.groups.message} }`
 				: `{ invalid_type_error: ${messageMatch.groups.message} }`
 		}
+
+		field.documentation = field.documentation?.replace(content, "")
 	}
 
 	if (field.kind === 'scalar') {
@@ -76,7 +80,7 @@ export const getZodConstructor = (
 			documentation = field.documentation.replace('.coerce', '')
 		}
 
-		zodType = computeCustomSchema(documentation) ?? zodType
+		zodType = computeCustomSchema(documentation, message) ?? zodType
 		extraModifiers.push(...computeModifiers(documentation))
 	}
 	if (!field.isRequired && field.type !== 'Json') extraModifiers.push('nullish()')

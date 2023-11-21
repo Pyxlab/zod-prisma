@@ -1,4 +1,4 @@
-import * as z from "zod"
+import * as z from "zod";
 
 export const PostModel = z.object({
   /**
@@ -9,7 +9,7 @@ export const PostModel = z.object({
   /**
    * A brief title that describes the contents of the post
    */
-  title: z.string().max(255, { message: "The title must be shorter than 256 characters" }),
+  title: z.coerce.string().max(255, { message: "The title must be shorter than 256 characters" }),
   /**
    * The actual contents of the post.
    */
@@ -17,5 +17,9 @@ export const PostModel = z.object({
   /**
    * The post date
    */
-  date: z.coerce.string(),
-})
+  date: z.coerce.string({ required_error: "date is required" }).datetime(),
+  /**
+   * The file url
+   */
+  fileUrl: z.string({ invalid_type_error: "the file url is string" }).url().nullish(),
+});

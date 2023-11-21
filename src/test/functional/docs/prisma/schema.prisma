@@ -23,7 +23,7 @@ model Post {
   id String @id @default(uuid())
 
   /// A brief title that describes the contents of the post
-  /// @zod.max(255, { message: "The title must be shorter than 256 characters" })
+  /// @zod.coerce.max(255, { message: "The title must be shorter than 256 characters" })
   title String
 
   /// The actual contents of the post.
@@ -31,6 +31,10 @@ model Post {
   contents String
 
   /// The post date
-  /// @zod.custom(z.coerce.string())
+  /// @zod.custom(z.coerce.string().datetime()).message("date is required")
   date DateTime @db.Date
+
+  /// The file url
+  /// @zod.message("the file url is string").url()
+  fileUrl String?
 }

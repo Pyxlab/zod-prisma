@@ -34,11 +34,45 @@ export const getZodDocElements = (docString: string) =>
 				)
 		)
 
-export const computeCustomSchema = (docString: string) => {
+const primitives = new Map(
+	[
+		'string',
+		'number',
+		'bigint',
+		'boolean',
+		'date',
+		'symbol',
+		'undefined',
+		'null',
+		'void',
+		'any',
+		'unknown',
+		'never',
+	].map((item) => [`${item}()`, item])
+)
+
+const isPrimitiveZod = (item: string) => {
+	return primitives.get(item)
+}
+
+export const computeCustomSchema = (docString: string, message: string) => {
+	let setMessage = false
 	return getZodDocElements(docString)
 		.find((modifier) => modifier.startsWith('custom('))
 		?.slice(7)
 		.slice(0, -1)
+		.split('.')
+		.map((item) => {
+			const hasPrimitive = isPrimitiveZod(item)
+
+			if (hasPrimitive && !setMessage) {
+				setMessage = true
+				return `${hasPrimitive}(${message})`
+			}
+
+			return item
+		})
+		.join('.')
 }
 
 export const computeModifiers = (docString: string) => {
