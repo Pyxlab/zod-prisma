@@ -67,7 +67,15 @@ export const getZodConstructor = (
 
 	if (field.isList) extraModifiers.push('array()')
 	if (field.documentation) {
-		const documentation = field.documentation.replace('.coerce', '').replace(messageRegex, '')
+		let documentation: string;
+		
+		if (field.documentation.includes('.custom(')) {
+			const [left, right] = field.documentation.split('.custom(')
+			documentation = left.replace(".coerce", "") + '.custom(' + right
+		} else {
+			documentation = field.documentation.replace(".coerce", "")
+		}
+
 		zodType = computeCustomSchema(documentation) ?? zodType
 		extraModifiers.push(...computeModifiers(documentation))
 	}
