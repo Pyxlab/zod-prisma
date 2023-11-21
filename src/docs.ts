@@ -30,8 +30,8 @@ export const getZodDocElements = (docString: string) =>
 				.map(
 					([each, contents]) =>
 						(each as string).replace(/\)?\./, '') +
-						`${stringify(contents as ArrayTree)})`,
-				),
+						`${stringify(contents as ArrayTree)})`
+				)
 		)
 
 export const computeCustomSchema = (docString: string) => {

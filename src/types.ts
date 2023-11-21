@@ -5,7 +5,7 @@ import type { DMMF } from '@prisma/generator-helper'
 export const getZodConstructor = (
 	field: DMMF.Field,
 	getRelatedModelName = (name: string | DMMF.SchemaEnum | DMMF.OutputType | DMMF.SchemaArg) =>
-		name.toString(),
+		name.toString()
 ) => {
 	let zodType = 'z.unknown()'
 	const extraModifiers: string[] = ['']
@@ -67,13 +67,13 @@ export const getZodConstructor = (
 
 	if (field.isList) extraModifiers.push('array()')
 	if (field.documentation) {
-		let documentation: string;
-		
+		let documentation: string
+
 		if (field.documentation.includes('.custom(')) {
 			const [left, right] = field.documentation.split('.custom(')
-			documentation = left.replace(".coerce", "") + '.custom(' + right
+			documentation = left.replace('.coerce', '') + '.custom(' + right
 		} else {
-			documentation = field.documentation.replace(".coerce", "")
+			documentation = field.documentation.replace('.coerce', '')
 		}
 
 		zodType = computeCustomSchema(documentation) ?? zodType

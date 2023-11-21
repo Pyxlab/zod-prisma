@@ -25,26 +25,26 @@ generatorHandler({
 		const { schemaPath } = options
 		const outputPath = options.generator.output!.value
 		const clientPath = options.otherGenerators.find(
-			(each) => each.provider.value === 'prisma-client-js',
+			(each) => each.provider.value === 'prisma-client-js'
 		)!.output!.value!
 
 		const results = configSchema.safeParse(options.generator.config)
 		if (!results.success)
 			throw new Error(
-				'Incorrect config provided. Please check the values you provided and try again.',
+				'Incorrect config provided. Please check the values you provided and try again.'
 			)
 
 		const config = results.data
-		const prismaOptions: PrismaOptions = {
+		const prismaOptions = {
 			clientPath,
 			outputPath,
 			schemaPath,
-		}
+		} as PrismaOptions
 
 		const indexFile = project.createSourceFile(
 			`${outputPath}/index.ts`,
 			{},
-			{ overwrite: true },
+			{ overwrite: true }
 		)
 
 		generateBarrelFile(models, indexFile)
@@ -52,14 +52,14 @@ generatorHandler({
 		indexFile.formatText({
 			indentSize: 2,
 			convertTabsToSpaces: true,
-			semicolons: SemicolonPreference.Remove,
+			semicolons: SemicolonPreference.Insert,
 		})
 
 		models.forEach((model) => {
 			const sourceFile = project.createSourceFile(
 				`${outputPath}/${model.name.toLowerCase()}.ts`,
 				{},
-				{ overwrite: true },
+				{ overwrite: true }
 			)
 
 			populateModelFile(model, sourceFile, config, prismaOptions)
@@ -67,7 +67,7 @@ generatorHandler({
 			sourceFile.formatText({
 				indentSize: 2,
 				convertTabsToSpaces: true,
-				semicolons: SemicolonPreference.Remove,
+				semicolons: SemicolonPreference.Insert,
 			})
 		})
 
