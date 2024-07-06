@@ -147,6 +147,7 @@ npm install -g yarn
 
       modelCase                = "PascalCase" // (default) Output models using pascal case (ex. UserModel, PostModel)
       // modelCase             = "camelCase" // Output models using camel case (ex. userModel, postModel)
+			// modelCase             = "snake_case" // Output models using snake case (ex. user_model, post_model)
 
       modelSuffix              = "Model" // (default) Suffix to apply to your prisma models when naming Zod schemas
 
@@ -154,6 +155,14 @@ npm install -g yarn
       useDecimalJs             = true // represent the prisma Decimal type using Decimal.js (as Prisma does)
 
       imports                  = null // (default) will import the referenced file in generated schemas to be used via imports.someExportedVariable
+
+			includeTypename					= true    // (default) includes the __typename field in the generated schema
+			// includeTypename			= false   // does not include the __typename field in the generated schema
+			// includeTypename			= "model" // changes the typename to the one passed in quotes __typename -> __model
+
+			typenameCase						= "PascalCase" // (default) Output __typename using pascal case (ex. User, Post, UserPost)
+			// typenameCase					= "camelCase" // Output __typename using camel case (ex. user, post, userPost)
+			// typenameCase					= "snake_case" // Output __typename using snake case (ex. user, post, user_post)
 
       // https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-by-null-values
       prismaJsonNullability    = true // (default) uses prisma's scheme for JSON field nullability
