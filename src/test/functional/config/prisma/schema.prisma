@@ -12,11 +12,12 @@ generator client {
 }
 
 generator zod {
-  provider      = "zod-prisma"
-  output        = "../actual/"
-  relationModel = "default"
-  modelCase     = "camelCase"
-  modelSuffix   = "Schema"
+  provider        = "zod-prisma"
+  output          = "../actual/"
+  relationModel   = "default"
+  modelCase       = "camelCase"
+  modelSuffix     = "Schema"
+  includeTypename = "schema"
 }
 
 model User {
