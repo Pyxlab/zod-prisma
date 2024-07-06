@@ -12,7 +12,8 @@ import {
 import { Config, PrismaOptions } from './config'
 import { getJSDocs } from './docs'
 import { getZodConstructor } from './types'
-import { dotSlash, needsRelatedModel, snakeCase, useModelNames, writeArray } from './util'
+import { dotSlash, needsRelatedModel, useModelNames, writeArray } from './util'
+import { snakeCase } from './change-case'
 
 export const writeImportsForModel = (
 	model: DMMF.Model,
@@ -291,7 +292,7 @@ export const populateModelFile = (
 export const generateBarrelFile = (models: DMMF.Model[], indexFile: SourceFile) => {
 	models.forEach((model) =>
 		indexFile.addExportDeclaration({
-			moduleSpecifier: `./${model.name.toLowerCase()}`,
+			moduleSpecifier: `./${snakeCase(model.name)}`,
 		})
 	)
 }

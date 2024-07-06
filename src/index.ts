@@ -8,6 +8,7 @@ import { version } from '../package.json'
 
 import { configSchema, PrismaOptions } from './config'
 import { populateModelFile, generateBarrelFile } from './generator'
+import { snakeCase } from './change-case'
 
 generatorHandler({
 	onManifest() {
@@ -57,7 +58,7 @@ generatorHandler({
 
 		models.forEach((model) => {
 			const sourceFile = project.createSourceFile(
-				`${outputPath}/${model.name.toLowerCase()}.ts`,
+				`${outputPath}/${snakeCase(model.name)}.ts`,
 				{},
 				{ overwrite: true }
 			)

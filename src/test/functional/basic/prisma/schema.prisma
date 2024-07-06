@@ -36,7 +36,7 @@ model Presentation {
   updated DateTime @default(now())
 }
 
-model Spreadsheet {
+model SpreadsheetEntry {
   id       String @id @default(cuid())
   filename String @unique
   author   String
