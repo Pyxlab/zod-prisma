@@ -135,6 +135,11 @@ export const generateSchemaForModel = (
 ) => {
 	const { modelName } = useModelNames(config)
 
+	const typename =
+		typeof config.includeTypename === 'string'
+			? config.includeTypename.replace(/^__/, '')
+			: 'typename'
+
 	sourceFile.addVariableStatement({
 		declarationKind: VariableDeclarationKind.Const,
 		isExported: true,
@@ -146,6 +151,16 @@ export const generateSchemaForModel = (
 					writer
 						.write('z.object(')
 						.inlineBlock(() => {
+							if (config.includeTypename) {
+								writer
+									.write(`__${typename}: z.literal(`)
+									.quote(model.name)
+									.write(').')
+									.write('default(')
+									.quote(model.name)
+									.write('),')
+									.newLine()
+							}
 							model.fields
 								.filter((f) => f.kind !== 'object')
 								.forEach((field) => {
@@ -161,6 +176,8 @@ export const generateSchemaForModel = (
 			},
 		],
 	})
+
+	if (!config.includeTypename) return
 }
 
 export const generateRelatedSchemaForModel = (
@@ -172,11 +189,29 @@ export const generateRelatedSchemaForModel = (
 	const { modelName, relatedModelName } = useModelNames(config)
 
 	const relationFields = model.fields.filter((f) => f.kind === 'object')
+	const extended = config.includeTypename ? 'omitTypename' : modelName(model.name)
+	const typename =
+		typeof config.includeTypename === 'string'
+			? config.includeTypename.replace(/^__/, '')
+			: 'typename'
+
+	if (config.includeTypename) {
+		sourceFile.addVariableStatement({
+			declarationKind: VariableDeclarationKind.Const,
+			isExported: false,
+			declarations: [
+				{
+					name: `omitTypename`,
+					initializer: `${modelName(model.name)}.omit({ __${typename}: true })`,
+				},
+			],
+		})
+	}
 
 	sourceFile.addInterface({
 		name: `Complete${model.name}`,
 		isExported: true,
-		extends: [`z.infer<typeof ${modelName(model.name)}>`],
+		extends: [`z.infer<typeof ${extended}>`],
 		properties: relationFields.map((f) => ({
 			hasQuestionToken: !f.isRequired,
 			name: f.name,
@@ -208,6 +243,17 @@ export const generateRelatedSchemaForModel = (
 					writer
 						.write(`z.lazy(() => ${modelName(model.name)}.extend(`)
 						.inlineBlock(() => {
+							if (config.includeTypename) {
+								writer
+									.write(`__${typename}: z.literal(`)
+									.quote(model.name)
+									.write(').')
+									.write('default(')
+									.quote(model.name)
+									.write('),')
+									.newLine()
+							}
+
 							relationFields.forEach((field) => {
 								writeArray(writer, getJSDocs(field.documentation))
 
