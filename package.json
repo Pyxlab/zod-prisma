@@ -1,6 +1,6 @@
 {
 	"name": "@pyxlab/zod-prisma",
-	"version": "0.6.1",
+	"version": "1.0.0",
 	"private": false,
 	"description": "A Prisma generator that creates Zod schemas for all of your models",
 	"license": "MIT",
