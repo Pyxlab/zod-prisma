@@ -3,16 +3,21 @@ import { DMMF } from '@prisma/generator-helper'
 import { Config } from './config'
 
 import type { CodeBlockWriter } from 'ts-morph'
+import { camelCase, pascalCase, snakeCase } from './change-case'
 
 export const writeArray = (writer: CodeBlockWriter, array: string[], newLine = true) =>
 	array.forEach((line) => writer.write(line).conditionalNewLine(newLine))
 
 export const useModelNames = ({ modelCase, modelSuffix, relationModel }: Config) => {
 	const formatModelName = (name: string, prefix = '') => {
-		if (modelCase === 'camelCase') {
-			name = name.slice(0, 1).toLowerCase() + name.slice(1)
+		switch (modelCase) {
+			case 'PascalCase':
+				return pascalCase(prefix + pascalCase(name) + pascalCase(modelSuffix))
+			case 'camelCase':
+				return camelCase(prefix + pascalCase(name) + pascalCase(modelSuffix))
+			case 'snake_case':
+				return snakeCase(prefix + pascalCase(name) + pascalCase(modelSuffix))
 		}
-		return `${prefix}${name}${modelSuffix}`
 	}
 
 	return {
