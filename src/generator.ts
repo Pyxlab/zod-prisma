@@ -12,7 +12,7 @@ import {
 import { Config, PrismaOptions } from './config'
 import { getJSDocs } from './docs'
 import { getZodConstructor } from './types'
-import { dotSlash, needsRelatedModel, useModelNames, writeArray } from './util'
+import { dotSlash, needsRelatedModel, snakeCase, useModelNames, writeArray } from './util'
 
 export const writeImportsForModel = (
 	model: DMMF.Model,
@@ -154,10 +154,10 @@ export const generateSchemaForModel = (
 							if (config.includeTypename) {
 								writer
 									.write(`__${typename}: z.literal(`)
-									.quote(model.name)
+									.quote(snakeCase(model.name))
 									.write(').')
 									.write('default(')
-									.quote(model.name)
+									.quote(snakeCase(model.name))
 									.write('),')
 									.newLine()
 							}
@@ -246,10 +246,10 @@ export const generateRelatedSchemaForModel = (
 							if (config.includeTypename) {
 								writer
 									.write(`__${typename}: z.literal(`)
-									.quote(model.name)
+									.quote(snakeCase(model.name))
 									.write(').')
 									.write('default(')
-									.quote(model.name)
+									.quote(snakeCase(model.name))
 									.write('),')
 									.newLine()
 							}
