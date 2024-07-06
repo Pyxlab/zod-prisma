@@ -1,9 +1,7 @@
-import { generatorHandler } from '@prisma/generator-helper'
+import { DMMF, generatorHandler } from '@prisma/generator-helper'
 import { Project } from 'ts-morph'
 import { SemicolonPreference } from 'typescript'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore Importing package.json for automated synchronization of version numbers
 import { version } from '../package.json'
 
 import { configSchema, PrismaOptions } from './config'
@@ -48,7 +46,7 @@ generatorHandler({
 			{ overwrite: true }
 		)
 
-		generateBarrelFile(models, indexFile)
+		generateBarrelFile(models as DMMF.Model[], indexFile)
 
 		indexFile.formatText({
 			indentSize: 2,
