@@ -7,7 +7,7 @@ const literalSchema = z.union([z.string(), z.number(), z.boolean()]);
 const jsonSchema: z.ZodSchema<Json> = z.lazy(() => z.union([literalSchema, z.array(jsonSchema), z.record(jsonSchema)]));
 
 export const SpreadsheetModel = z.object({
-  __schema: z.literal("Spreadsheet").default("Spreadsheet"),
+  __schema: z.literal("spreadsheet").default("spreadsheet"),
   id: z.string(),
   filename: z.string(),
   author: z.string(),

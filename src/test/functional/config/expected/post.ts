@@ -2,7 +2,7 @@ import * as z from "zod";
 import { CompleteUser, userSchema } from "./index";
 
 export const _postSchema = z.object({
-  __schema: z.literal("Post").default("Post"),
+  __schema: z.literal("post").default("post"),
   id: z.string(),
   title: z.string(),
   contents: z.string(),
@@ -20,6 +20,6 @@ export interface CompletePost extends z.infer<typeof omitTypename> {
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
 export const postSchema: z.ZodSchema<CompletePost> = z.lazy(() => _postSchema.extend({
-  __schema: z.literal("Post").default("Post"),
+  __schema: z.literal("post").default("post"),
   author: userSchema,
 }));
