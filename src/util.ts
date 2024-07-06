@@ -12,11 +12,11 @@ export const useModelNames = ({ modelCase, modelSuffix, relationModel }: Config)
 	const formatModelName = (name: string, prefix = '') => {
 		switch (modelCase) {
 			case 'PascalCase':
-				return pascalCase(prefix + pascalCase(name) + pascalCase(modelSuffix))
+				return prefix + pascalCase(pascalCase(name) + pascalCase(modelSuffix))
 			case 'camelCase':
-				return camelCase(prefix + pascalCase(name) + pascalCase(modelSuffix))
+				return prefix + camelCase(pascalCase(name) + pascalCase(modelSuffix))
 			case 'snake_case':
-				return snakeCase(prefix + pascalCase(name) + pascalCase(modelSuffix))
+				return prefix + snakeCase(pascalCase(name) + pascalCase(modelSuffix))
 		}
 	}
 
