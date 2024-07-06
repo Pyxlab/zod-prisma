@@ -26,7 +26,7 @@ describe('Regression Tests', () => {
 			}
 			
 			model User {
-				id			String @id
+				id			String @id 
 				type		UserType
 			}`,
 		})
