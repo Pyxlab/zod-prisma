@@ -16,8 +16,9 @@ generator zod {
   output          = "../actual/"
   relationModel   = "default"
   modelCase       = "camelCase"
-  modelSuffix     = "Schema"
-  includeTypename = "schema"
+  modelSuffix     = "schema"
+  includeTypename = "model"
+  typenameCase    = "snake_case"
 }
 
 model User {

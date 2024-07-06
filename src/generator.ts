@@ -12,7 +12,7 @@ import {
 import { Config, PrismaOptions } from './config'
 import { getJSDocs } from './docs'
 import { getZodConstructor } from './types'
-import { dotSlash, needsRelatedModel, useModelNames, writeArray } from './util'
+import { dotSlash, needsRelatedModel, useModelNames, useModelTypename, writeArray } from './util'
 import { snakeCase } from './change-case'
 
 export const writeImportsForModel = (
@@ -135,6 +135,7 @@ export const generateSchemaForModel = (
 	_prismaOptions: PrismaOptions
 ) => {
 	const { modelName } = useModelNames(config)
+	const typenameCase = useModelTypename(config)
 
 	const typename =
 		typeof config.includeTypename === 'string'
@@ -155,10 +156,10 @@ export const generateSchemaForModel = (
 							if (config.includeTypename) {
 								writer
 									.write(`__${typename}: z.literal(`)
-									.quote(snakeCase(model.name))
+									.quote(typenameCase(model.name))
 									.write(').')
 									.write('default(')
-									.quote(snakeCase(model.name))
+									.quote(typenameCase(model.name))
 									.write('),')
 									.newLine()
 							}
@@ -188,6 +189,7 @@ export const generateRelatedSchemaForModel = (
 	_prismaOptions: PrismaOptions
 ) => {
 	const { modelName, relatedModelName } = useModelNames(config)
+	const typenameCase = useModelTypename(config)
 
 	const relationFields = model.fields.filter((f) => f.kind === 'object')
 	const extended = config.includeTypename ? 'omitTypename' : modelName(model.name)
@@ -200,6 +202,7 @@ export const generateRelatedSchemaForModel = (
 		sourceFile.addVariableStatement({
 			declarationKind: VariableDeclarationKind.Const,
 			isExported: false,
+			leadingTrivia: (writer) => writer.blankLineIfLastNot(),
 			declarations: [
 				{
 					name: `omitTypename`,
@@ -247,10 +250,10 @@ export const generateRelatedSchemaForModel = (
 							if (config.includeTypename) {
 								writer
 									.write(`__${typename}: z.literal(`)
-									.quote(snakeCase(model.name))
+									.quote(typenameCase(model.name))
 									.write(').')
 									.write('default(')
-									.quote(snakeCase(model.name))
+									.quote(typenameCase(model.name))
 									.write('),')
 									.newLine()
 							}

@@ -29,6 +29,19 @@ export const useModelNames = ({ modelCase, modelSuffix, relationModel }: Config)
 	}
 }
 
+export const useModelTypename = ({ typenameCase }: Config) => {
+	return (name: string) => {
+		switch (typenameCase) {
+			case 'PascalCase':
+				return pascalCase(name)
+			case 'camelCase':
+				return camelCase(name)
+			case 'snake_case':
+				return snakeCase(name)
+		}
+	}
+}
+
 export const needsRelatedModel = (model: DMMF.Model, config: Config) =>
 	model.fields.some((field) => field.kind === 'object') && config.relationModel !== false
 
